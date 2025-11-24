@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,70 +9,78 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
-   <style>
-        html, body {
+    <style>
+        html,
+        body {
             margin: 0;
             padding: 0;
             height: 65%;
         }
 
-    
+
         h1 {
             color: white;
             text-align: center;
             padding-top: 50px;
-            font-size: 3em; 
+            font-size: 3em;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
         }
 
-       
+
         .intro-paragraph {
-            color: #f0f0f0; 
+            color: #f0f0f0;
             text-align: center;
-            max-width: 800px; 
-            margin: 20px auto; 
-            padding: 0 15px; 
-            font-size: 1.2em; 
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 0 15px;
+            font-size: 1.2em;
             line-height: 1.6;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7); 
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
         }
     </style>
 
-    </head>
+</head>
+
 <body style="background-image: url('{{ url_for('static', filename='images/landingimage.jpg') }}'); 
              background-size: cover; 
              background-position: center; 
-             background-attachment: fixed;;
+             background-attachment: fixed;
              min-height: 100vh;">
-            
-    
-    <div class="flex flex-col justify-center items-center h-screen w-full"> 
-        
-        <div class="p-4 max-w-4xl"> 
-            
-            <p class="intro-paragraph mb-2 text-4xl text-yellow-400">Welcome to SmartStudyApp!<br> 
-    <span class="sub-intro-line text-xl font-style: italic text-green-500">We replace old methods with personalized, adaptive learning. Start studying smarter, not just harder.</span></p>
-    
-</div>
+
+
+    <div class="flex flex-col justify-center items-center h-screen w-full">
+
+        <div class="p-4 max-w-4xl">
+
+            <p class="intro-paragraph mb-2 text-4xl text-yellow-400">Welcome to SmartStudyApp!<br>
+                <span class="sub-intro-line text-xl font-style: italic text-green-500">We replace old methods with
+                    personalized, adaptive learning. Start studying smarter, not just harder.</span>
+            </p>
+
+        </div>
 
         <div class="flex justify-center space-x-8 mt-8 mb-20">
-            
-            <a href="{{ url_for('login') }}" 
+
+            <a href="{{ url_for('login') }}"
                 class="relative inline-flex items-center justify-center px-10 py-2.5 overflow-hidden tracking-tighter text-white bg-yellow-600 rounded-md group">
-                <span class="absolute w-0 h-0 transition-all duration-500 ease-out bg-gray-600 rounded-full group-hover:w-56 group-hover:h-56"></span>
+                <span
+                    class="absolute w-0 h-0 transition-all duration-500 ease-out bg-gray-600 rounded-full group-hover:w-56 group-hover:h-56"></span>
                 <span class="relative text-base font-semibold">Login</span>
             </a>
 
-            <a href="{{ url_for('signup') }}" 
+            <a href="{{ url_for('signup') }}"
                 class="relative inline-flex items-center justify-center px-8 py-2.5 overflow-hidden tracking-tighter text-white bg-orange-600 rounded-md group">
-                <span class="absolute w-0 h-0 transition-all duration-500 ease-out bg-gray-600 rounded-full group-hover:w-56 group-hover:h-56"></span>
+                <span
+                    class="absolute w-0 h-0 transition-all duration-500 ease-out bg-gray-600 rounded-full group-hover:w-56 group-hover:h-56"></span>
                 <span class="relative text-base font-semibold">Sign Up</span>
             </a>
 
         </div>
     </div>
-    </body>
+</body>
+
 </html>
 
-    </body>
+</body>
+
 </html>

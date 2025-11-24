@@ -2,9 +2,9 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 from models import db, User, Subject, Topic, Subtopic
 from datetime import datetime, date
 
-app = Flask (__name__)
+app = Flask(__name__)
 
-app.secret_key = 'your_secret_key_here'
+app.secret_key = 'smartstudy_app_secret_key_2025_very_secure_123'
 
 # database 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
@@ -22,7 +22,7 @@ def get_user_id():
 
 def update_topic_progress(topic_id):
     """Calculates and updates Topic progress based on its Subtopics."""
-    topic = Topic.query.get(topic_id)
+    topic = db.session.get(Topic, topic_id)  
     if not topic:
         return
 
@@ -37,7 +37,7 @@ def update_topic_progress(topic_id):
 
 def update_subject_progress(subject_id):
     """Calculates and updates Subject progress based on its Topics."""
-    subject = Subject.query.get(subject_id)
+    subject = db.session.get(Subject, subject_id) 
     if not subject:
         return
 
@@ -54,24 +54,49 @@ def dashboard():
         flash('Please log in to view the dashboard.')
         return redirect(url_for('login'))
     
-   
-    user = User.query.get(user_id)
+    user = db.session.get(User, user_id)  
     
+    # Fetch user's subjects
+    subjects = Subject.query.filter_by(user_id=user_id).order_by(Subject.priority.desc(), Subject.deadline.asc()).all()
     
-    subjects = [] 
-    
+    total_subjects = len(subjects)
+    total_topics = sum(subject.total_topics for subject in subjects)
+    completed_topics = sum(subject.completed_topics for subject in subjects)
+    completion_percentage = int((completed_topics / total_topics * 100) if total_topics > 0 else 0)
+
+    study_streak = 0 
+
+    # AI recommendation 
+    next_topic = None
+    for subject in subjects:
+        for topic in subject.topics:
+            if not topic.is_completed:
+                next_topic = topic
+                break
+        if next_topic:
+            break
+    if next_topic:
+        ai_recommendation = {'topic': next_topic.name, 'reason': 'Deadline approaching / Low completion rate'}
+    else:
+        ai_recommendation = {'topic': 'N/A', 'reason': 'All topics completed!'}
+
+    # Chart data
+    completed_count = completed_topics
+    pending_count = total_topics - completed_topics
+
     return render_template(
-        'dashboard.html', 
+        'dashboard.html',
         user=user,
         subjects=subjects,
-        total_subjects=0,
-        topics_completed=0,
-        total_topics=0,
-        completion_percentage=0,
-        study_streak=0,
-        ai_recommendation={'topic': 'N/A', 'reason': 'Content not implemented.'},
-        chart_data={'completed': 0, 'pending': 0}
+        total_subjects=total_subjects,
+        total_topics=total_topics,
+        topics_completed=completed_topics,
+        completion_percentage=completion_percentage,
+        study_streak=study_streak,
+        ai_recommendation=ai_recommendation,
+        chart_data={'completed': completed_count, 'pending': pending_count}
     )
+
 
 @app.route('/')
 def home():
@@ -112,6 +137,7 @@ def signup():
     
     return render_template('signup.html') 
 
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -122,13 +148,11 @@ def login():
       
         if user and user.password == password: 
             session['user_id'] = user.id  
-            flash(f'Welcome back, {user.first_name}!') 
             return redirect(url_for('dashboard'))
         else:
-        
             flash('Invalid email or password.') 
             
-    return render_template('login.html') 
+    return render_template('login.html')
 
 
 @app.route('/logout')
@@ -209,7 +233,7 @@ def subjects(subject_id):
                 flash("Subtopic name and Topic ID are required.", 'error')
                 return redirect(url_for('subjects', subject_id=subject_id))
             
-            topic = Topic.query.get(parent_topic_id)
+            topic = db.session.get(Topic, parent_topic_id)  
             if not topic or topic.subject.user_id != user_id:
                  flash("Invalid Topic or access denied.", 'error')
                  return redirect(url_for('subjects', subject_id=subject_id))
@@ -258,8 +282,6 @@ def subjects(subject_id):
                 print(f"--- DATABASE DELETION ERROR ---")
                 print(f"Error deleting subject {subject_id_to_delete}: {e}")
                 print(f"-------------------------------")
-                
-                flash("An unexpected database error occurred during deletion.", 'error')
 
             return redirect(url_for('subjects'))
      
@@ -291,7 +313,7 @@ def toggle_subtopic(subtopic_id):
     if not user_id:
         return redirect(url_for('login'))
 
-    subtopic = Subtopic.query.get(subtopic_id)
+    subtopic = db.session.get(Subtopic, subtopic_id)  
     
   
     if not subtopic or subtopic.topic.subject.user_id != user_id:
@@ -309,6 +331,34 @@ def toggle_subtopic(subtopic_id):
     
     flash(f'Subtopic "{subtopic.name}" marked {"Completed" if subtopic.is_completed else "Pending"}.')
     return redirect(url_for('subjects', subject_id=subtopic.topic.subject_id))
+
+@app.route('/reports')
+def reports():
+    user_id = get_user_id()
+    if not user_id:
+        flash("Please log in to view Reports.", "error")
+        return redirect(url_for('login'))
+
+    # Fetch subjects and topics 
+    subjects = Subject.query.filter_by(user_id=user_id).all()
+    subject_progress = []
+    recent_subtopics = Subtopic.query.join(Topic).join(Subject)\
+                        .filter(Subject.user_id==user_id)\
+                        .order_by(Subtopic.date_completed.desc())\
+                        .limit(5).all()
+
+    for subject in subjects:
+        total_topics = subject.topics.count()
+        completed_topics = subject.topics.filter_by(is_completed=True).count()
+        progress = int((completed_topics / total_topics) * 100) if total_topics > 0 else 0
+        subject_progress.append({'name': subject.name, 'progress': progress})
+
+    return render_template(
+        'reports.html',
+        subjects=subjects,
+        subject_progress=subject_progress,
+        recent_subtopics=recent_subtopics
+    )
 
 if __name__ == '__main__':
     app.run(debug=True)

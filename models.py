@@ -9,16 +9,16 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False) 
     password = db.Column(db.String(200), nullable=False)
 
-# Relationship to subjects
+
     subjects = db.relationship('Subject', backref='user', lazy='dynamic')
 
 class Subject(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     deadline = db.Column(db.Date, nullable=True)
-    priority = db.Column(db.String(50), default='Medium') # Low, Medium, High
+    priority = db.Column(db.String(50), default='Medium') 
 
-    # Columns for dynamic progress tracking
+    # dynamic progress tracking
     total_topics = db.Column(db.Integer, default=0)
     completed_topics = db.Column(db.Integer, default=0)
     
@@ -28,9 +28,9 @@ class Subject(db.Model):
 class Topic(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(150), nullable=False)
-    difficulty = db.Column(db.String(50), default='Medium') # Easy, Medium, Hard
+    difficulty = db.Column(db.String(50), default='Medium') 
     
-    # Columns for dynamic progress tracking (based on subtopics)
+    # dynamic progress tracking (on subtopics)
     total_subtopics = db.Column(db.Integer, default=0)
     completed_subtopics = db.Column(db.Integer, default=0)
     is_completed = db.Column(db.Boolean, default=False)
@@ -44,4 +44,6 @@ class Subtopic(db.Model):
     is_completed = db.Column(db.Boolean, default=False)
     date_completed = db.Column(db.DateTime, nullable=True)
     
-    topic_id = db.Column(db.Integer, db.ForeignKey('topic.id'), nullable=False)    
+    topic_id = db.Column(db.Integer, db.ForeignKey('topic.id'), nullable=False)  
+    
+      

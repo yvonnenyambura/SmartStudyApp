@@ -1,24 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Subjects Page</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Custom scrollbar for the subject list */
         .custom-scrollbar::-webkit-scrollbar {
             width: 6px;
         }
+
         .custom-scrollbar::-webkit-scrollbar-thumb {
             background-color: #DE5499;
             border-radius: 3px;
         }
+
         .custom-scrollbar::-webkit-scrollbar-track {
             background-color: #EDDCD9;
         }
 
-        /* Styling for the form inputs to match the login theme */
+
         .form_style_subjects {
             outline: none;
             border: 2px solid #264143;
@@ -28,73 +30,89 @@
             font-size: 14px;
             transition: all 0.2s ease;
         }
+
         .form_style_subjects:focus {
             transform: translateY(2px);
             box-shadow: 1px 1px 0px 0px #E99F4C;
         }
+
         .btn_subject_add {
             background: #DE5499;
             box-shadow: 2px 2px 0px 0px #E99F4C;
             transition: all 0.2s ease;
         }
+
         .btn_subject_add:hover {
-             box-shadow: 1px 1px 0px 0px #E99F4C;
-             transform: translateY(1px);
+            box-shadow: 1px 1px 0px 0px #E99F4C;
+            transform: translateY(1px);
         }
     </style>
 </head>
-<body class="bg-gray-100 min-h-screen font-sans">
-    
-    <!-- Flash Messages Area -->
-    <div class="fixed top-0 left-1/2 -translate-x-1/2 z-50 p-4 w-full max-w-sm">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <!-- Styling messages based on category (using 'error' for red, default for green) -->
-                    <div class="p-3 mb-2 text-sm text-center rounded-lg 
-                                {% if category == 'error' %} bg-red-100 text-red-700 border border-red-400
-                                {% else %} bg-green-100 text-green-700 border border-green-400 {% endif %}" 
-                        role="alert">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-    </div>
 
-    <!-- Header / Navigation -->
-    <header class="bg-white shadow-md sticky top-0 z-10">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex justify-between items-center">
-            <div class="flex items-center space-x-6">
-                <a href="{{ url_for('dashboard') }}" class="text-2xl font-bold text-gray-800 hover:text-indigo-600 transition">SmartStudy</a>
-                <!-- Subjects Page Title -->
-                <h1 class="text-2xl font-semibold text-indigo-600">My Study Plan</h1>
+<body class="bg-black min-h-screen font-sans">
+
+
+    <header class="bg-black border-b border-white-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+
+
+                <div class="flex-shrink-0">
+                    <a href="{{ url_for('dashboard') }}"
+                        class="text-2xl font-bold text-white hover:text-indigo-600 transition">SmartStudy</a>
+                </div>
+
+
+                <div class="flex space-x-4">
+                    <a href="{{ url_for('dashboard') }}"
+                        class="text-white hover:text-indigo-600 px-3 py-2 rounded-md font-medium">Dashboard</a>
+                    <a href="{{ url_for('subjects') }}"
+                        class="text-white hover:text-indigo-600 px-3 py-2 rounded-md font-medium">My Subjects</a>
+                    <a href="{{url_for('reports') }}"
+                        class="text-white hover:text-indigo-600 px-3 py-2 rounded-md font-medium">Reports</a>
+                    <a href="{{ url_for('logout') }}"
+                        class="text-red-600 hover:text-red-700 px-3 py-2 rounded-md font-medium">Logout</a>
+                </div>
+
             </div>
-            
-            <!-- Log Out Button -->
-            <a href="{{ url_for('logout') }}" 
-               class="px-4 py-2 bg-red-500 text-white font-medium rounded-lg shadow-md hover:bg-red-600 transition duration-150 ease-in-out">
-                Logout
-            </a>
         </div>
     </header>
 
-    <!-- Main Content Area: Two Columns (Subject List and Details) -->
+
+
+    <div class="fixed top-0 left-1/2 -translate-x-1/2 z-50 p-4 w-full max-w-sm">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+
+        <div class="p-3 mb-2 text-sm text-center rounded-lg 
+                                {% if category == 'error' %} bg-red-100 text-red-700 border border-red-400
+                                {% else %} bg-green-100 text-green-700 border border-green-400 {% endif %}"
+            role="alert">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+    </div>
+
     <div class="flex flex-col md:flex-row max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6 md:space-y-0 md:space-x-6">
-        
-        <!-- Left Column: Subject List and Add Subject Form -->
+
+
         <div class="md:w-1/3 lg:w-1/4 space-y-6">
-            
-            <!-- Add New Subject Form -->
+
+            <!-- Adding New Subject -->
             <div class="bg-white p-4 rounded-xl shadow-lg border border-gray-200">
                 <h2 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">Add New Subject</h2>
                 <form method="POST" action="{{ url_for('subjects') }}" class="space-y-3">
                     <input type="hidden" name="action" value="add_subject">
                     <div>
-                        <input name="subject_name" placeholder="Subject Name" required class="form_style_subjects w-full" type="text">
+                        <input name="subject_name" placeholder="Subject Name" required
+                            class="form_style_subjects w-full" type="text">
                     </div>
                     <div>
-                        <input name="deadline" title="Deadline (Optional)" class="form_style_subjects w-full" type="date">
+                        <input name="deadline" title="Deadline (Optional)" class="form_style_subjects w-full"
+                            type="date">
                     </div>
                     <div>
                         <select name="priority" class="form_style_subjects w-full">
@@ -103,201 +121,230 @@
                             <option value="High">High Priority</option>
                         </select>
                     </div>
-                    <button type="submit" class="btn_subject_add text-white py-2 px-4 rounded-lg font-semibold w-full">Add Subject</button>
+                    <button type="submit"
+                        class="btn_subject_add text-white py-2 px-4 rounded-lg font-semibold w-full">Add
+                        Subject</button>
                 </form>
             </div>
 
-            <!-- Subject List (NOW USING CARD STYLES) -->
             <div class="bg-white p-4 rounded-xl shadow-lg border border-gray-200 h-96 overflow-y-auto custom-scrollbar">
                 <h2 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">Your Subjects</h2>
                 {% if subjects %}
-                    <div class="space-y-4">
-                        {% for subject in subjects %}
-                            <!-- Start of Subject Card -->
-                            <div class="p-4 rounded-xl transition duration-200 border-l-4 
+                <div class="space-y-4">
+                    {% for subject in subjects %}
+
+                    <div class="p-4 rounded-xl transition duration-200 border-l-4 
                                 {% if selected_subject and selected_subject.id == subject.id %} 
                                     bg-indigo-100 border-indigo-600 shadow-lg 
                                 {% else %} 
                                     bg-gray-50 border-gray-300 hover:bg-gray-100
                                 {% endif %}">
-                                
-                                <div class="flex items-start justify-between mb-2">
-                                    <!-- Navigation Link -->
-                                    <a href="{{ url_for('subjects', subject_id=subject.id) }}" 
-                                       class="flex-grow block hover:underline -m-2 p-2 rounded-lg 
+
+                        <div class="flex items-start justify-between mb-2">
+
+                            <a href="{{ url_for('subjects', subject_id=subject.id) }}" class="flex-grow block hover:underline -m-2 p-2 rounded-lg 
                                        {% if not (selected_subject and selected_subject.id == subject.id) %} 
                                            hover:bg-gray-100
                                        {% endif %}">
-                                        
-                                        <h3 class="text-lg font-extrabold text-gray-900 truncate pr-4">
-                                            {{ subject.name }}
-                                        </h3>
-                                    </a>
-                                    
-                                    <!-- Badge and Delete Container -->
-                                    <div class="flex items-center space-x-2 flex-shrink-0 ml-4">
-                                        <!-- Priority Badge -->
-                                        <span class="text-xs font-semibold px-2 py-0.5 rounded-full 
+
+                                <h3 class="text-lg font-extrabold text-gray-900 truncate pr-4"> {{ subject.name }}</h3>
+                            </a>
+
+                            <div class="flex items-center space-x-2 flex-shrink-0 ml-4">
+                                <span class="text-xs font-semibold px-2 py-0.5 rounded-full 
                                             {% if subject.priority == 'High' %} bg-red-200 text-red-800 
                                             {% elif subject.priority == 'Medium' %} bg-yellow-200 text-yellow-800 
                                             {% else %} bg-green-200 text-green-800 
                                             {% endif %}">
-                                            {{ subject.priority }}
-                                        </span>
-                                        
-                                        <!-- 
-                                            FIX: Changed to a button that calls a JS function to display a custom modal 
-                                            instead of submitting the form directly or relying on the blocked browser confirm().
-                                        -->
-                                        <button type="button" 
-                                                onclick="showDeleteModal('{{ subject.id }}', '{{ subject.name | e }}')"
-                                                class="text-gray-400 hover:text-red-600 transition p-1 -m-1" 
-                                                title="Delete Subject">
-                                            <!-- Trash Icon (SVG) -->
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
-                                        </button>
-                                        
-                                    </div>
-                                </div>
+                                    {{ subject.priority }}
+                                </span>
 
-                                <!-- Progress and Details (Also made clickable for navigation) -->
-                                <a href="{{ url_for('subjects', subject_id=subject.id) }}" 
-                                   class="block text-sm text-gray-600 space-y-1 hover:text-indigo-700 transition">
-                                    <p>Progress: <span class="font-bold">{{ subject.completed_topics }} / {{ subject.total_topics }}</span> Topics</p>
-                                    <p class="text-xs text-gray-500">Deadline: {{ subject.deadline if subject.deadline else 'Not Set' }}</p>
-                                </a>
-                                
-                                <!-- Simple Progress Bar -->
-                                {% set progress_percent = (subject.completed_topics / subject.total_topics * 100) if subject.total_topics > 0 else 0 %}
-                                <div class="w-full bg-gray-200 rounded-full h-1.5 mt-3">
-                                    <div class="h-1.5 rounded-full bg-indigo-600" style="width: {{ progress_percent }}%;"></div>
-                                </div>
+                                <button type="button"
+                                    onclick="showDeleteModal('{{ subject.id }}', '{{ subject.name | e }}')"
+                                    class="text-gray-400 hover:text-red-600 transition p-1 -m-1" title="Delete Subject">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" class="w-4 h-4">
+                                        <path d="M3 6h18" />
+                                        <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+                                        <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+                                    </svg>
+                                </button>
+
                             </div>
-                            <!-- End of Subject Card -->
-                        {% endfor %}
+                        </div>
+
+
+                        <a href="{{ url_for('subjects', subject_id=subject.id) }}"
+                            class="block text-sm text-gray-600 space-y-1 hover:text-indigo-700 transition">
+                            <p>Progress: <span class="font-bold">{{ subject.completed_topics }} / {{
+                                    subject.total_topics }}</span> Topics</p>
+                            <p class="text-xs text-gray-500">Deadline: {{ subject.deadline if subject.deadline else 'Not
+                                Set' }}</p>
+                        </a>
+
+                        <!-- Progress Bar -->
+                        {% set progress_percent = (subject.completed_topics / subject.total_topics * 100) if
+                        subject.total_topics > 0 else 0 %}
+                        <div class="w-full bg-gray-200 rounded-full h-1.5 mt-3">
+                            <div class="h-1.5 rounded-full bg-indigo-600" style="width: {{ progress_percent }}%;"></div>
+                        </div>
                     </div>
+
+                    {% endfor %}
+                </div>
                 {% else %}
-                    <p class="text-gray-500 text-sm">No subjects added yet. Use the form above to get started!</p>
+                <p class="text-gray-500 text-sm">No subjects added yet. Use the form above to get started!</p>
                 {% endif %}
             </div>
         </div>
 
-        <!-- Right Column: Subject Details (Topics and Subtopics) -->
+        <!--  Subject(topics and subtopics) -->
         <div class="md:w-2/3 lg:w-3/4 space-y-6">
             {% if selected_subject %}
-                <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
-                    
-                    <h2 class="text-3xl font-extrabold text-indigo-700 mb-2">{{ selected_subject.name }}</h2>
-                    <p class="text-sm text-gray-600 mb-4">
-                        Deadline: <span class="font-semibold">{{ selected_subject.deadline if selected_subject.deadline else 'N/A' }}</span> | 
-                        Priority: <span class="font-semibold text-{{ 'red' if selected_subject.priority == 'High' else ('orange' if selected_subject.priority == 'Medium' else 'green') }}-600">{{ selected_subject.priority }}</span>
-                    </p>
+            <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
 
-                    <!-- Add New Topic Form -->
-                    <div class="bg-gray-50 p-4 rounded-lg mb-6 border border-gray-200">
-                        <h3 class="text-xl font-semibold text-gray-800 mb-3">Add New Topic</h3>
-                        <form method="POST" action="{{ url_for('subjects', subject_id=selected_subject.id) }}" class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
-                            <input type="hidden" name="action" value="add_topic">
-                            <input type="hidden" name="subject_id" value="{{ selected_subject.id }}">
-                            <input name="topic_name" placeholder="Topic Name (e.g., 'Linear Algebra')" required class="form_style_subjects flex-grow" type="text">
-                            <select name="difficulty" class="form_style_subjects w-full sm:w-auto">
-                                <option value="Easy">Easy</option>
-                                <option value="Medium" selected>Medium</option>
-                                <option value="Hard">Hard</option>
-                            </select>
-                            <button type="submit" class="btn_subject_add text-white py-2 px-4 rounded-lg font-semibold w-full sm:w-auto">Add Topic</button>
-                        </form>
-                    </div>
+                <h2 class="text-3xl font-extrabold text-indigo-700 mb-2">{{ selected_subject.name }}</h2>
+                <p class="text-sm text-gray-600 mb-4">
+                    Deadline: <span class="font-semibold">{{ selected_subject.deadline if selected_subject.deadline else
+                        'N/A' }}</span> |
+                    Priority: <span
+                        class="font-semibold text-{{ 'red' if selected_subject.priority == 'High' else ('orange' if selected_subject.priority == 'Medium' else 'green') }}-600">{{
+                        selected_subject.priority }}</span>
+                </p>
 
-                    <!-- Topics List -->
-                    <h3 class="text-2xl font-bold text-gray-800 mb-4">Topics Breakdown</h3>
-                    {% if selected_subject.topics %}
-                        <div class="space-y-6">
-                            {% for topic in selected_subject.topics.all() %}
-                                <div class="p-4 rounded-lg border 
+                <!-- Add New Topic Form -->
+                <div class="bg-gray-50 p-4 rounded-lg mb-6 border border-gray-200">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">Add New Topic</h3>
+                    <form method="POST" action="{{ url_for('subjects', subject_id=selected_subject.id) }}"
+                        class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
+                        <input type="hidden" name="action" value="add_topic">
+                        <input type="hidden" name="subject_id" value="{{ selected_subject.id }}">
+                        <input name="topic_name" placeholder="Topic Name (e.g., 'Linear Algebra')" required
+                            class="form_style_subjects flex-grow" type="text">
+                        <select name="difficulty" class="form_style_subjects w-full sm:w-auto">
+                            <option value="Easy">Easy</option>
+                            <option value="Medium" selected>Medium</option>
+                            <option value="Hard">Hard</option>
+                        </select>
+                        <button type="submit"
+                            class="btn_subject_add text-white py-2 px-4 rounded-lg font-semibold w-full sm:w-auto">Add
+                            Topic</button>
+                    </form>
+                </div>
+
+                <!-- Topics List -->
+                <h3 class="text-2xl font-bold text-gray-800 mb-4">Topics Breakdown</h3>
+                {% if selected_subject.topics %}
+                <div class="space-y-6">
+                    {% for topic in selected_subject.topics.all() %}
+                    <div
+                        class="p-4 rounded-lg border 
                                     {% if topic.is_completed %} bg-green-50 border-green-300 {% else %} bg-white border-gray-300 {% endif %} shadow-sm">
-                                    
-                                    <div class="flex justify-between items-center mb-2">
-                                        <h4 class="font-bold text-lg 
+
+                        <div class="flex justify-between items-center mb-2">
+                            <h4
+                                class="font-bold text-lg 
                                             {% if topic.is_completed %} text-green-700 {% else %} text-gray-800 {% endif %}">
-                                            {{ topic.name }}
-                                        </h4>
-                                        <span class="text-xs font-medium px-2 py-1 rounded-full 
+                                {{ topic.name }}
+                            </h4>
+                            <span
+                                class="text-xs font-medium px-2 py-1 rounded-full 
                                             {% if topic.difficulty == 'Hard' %} bg-red-200 text-red-800 {% elif topic.difficulty == 'Medium' %} bg-yellow-200 text-yellow-800 {% else %} bg-green-200 text-green-800 {% endif %}">
-                                            {{ topic.difficulty }}
-                                        </span>
-                                    </div>
-
-                                    <!-- Subtopic List -->
-                                    <ul class="ml-4 space-y-1">
-                                        {% for subtopic in topic.subtopics.all() %}
-                                            <li class="flex justify-between items-center text-sm py-1">
-                                                <span class="
-                                                    {% if subtopic.is_completed %} line-through text-gray-500 {% else %} text-gray-700 {% endif %}">
-                                                    {{ subtopic.name }}
-                                                </span>
-                                                <!-- Toggle Subtopic Button -->
-                                                <form method="POST" action="{{ url_for('toggle_subtopic', subtopic_id=subtopic.id) }}">
-                                                    <button type="submit" title="Mark as {{ 'Pending' if subtopic.is_completed else 'Completed' }}"
-                                                        class="text-xs font-semibold px-2 py-0.5 rounded transition duration-150 ease-in-out 
-                                                               {% if subtopic.is_completed %} bg-gray-300 text-gray-800 hover:bg-gray-400 {% else %} bg-indigo-500 text-white hover:bg-indigo-600 {% endif %}">
-                                                        {{ "Done" if subtopic.is_completed else "Mark Complete" }}
-                                                    </button>
-                                                </form>
-                                            </li>
-                                        {% endfor %}
-                                    </ul>
-                                    
-                                    <!-- Add New Subtopic Form -->
-                                    <div class="mt-3 pt-2 border-t border-dashed border-gray-300">
-                                        <form method="POST" action="{{ url_for('subjects', subject_id=selected_subject.id) }}" class="flex space-x-2">
-                                            <input type="hidden" name="action" value="add_subtopic">
-                                            <input type="hidden" name="topic_id" value="{{ topic.id }}">
-                                            <input name="subtopic_name" placeholder="Add Subtopic..." required class="form_style_subjects flex-grow" type="text">
-                                            <button type="submit" class="btn_subject_add text-white text-sm px-3 py-1 rounded-lg font-semibold">Add</button>
-                                        </form>
-                                    </div>
-
-                                </div>
-                            {% endfor %}
+                                {{ topic.difficulty }}
+                            </span>
                         </div>
-                    {% else %}
-                        <p class="text-gray-500 mt-4">No topics found for this subject. Add a new topic above!</p>
-                    {% endif %}
+
+                        <!-- Subtopic List -->
+                        <ul class="ml-4 space-y-1">
+                            {% for subtopic in topic.subtopics.all() %}
+                            <li class="flex justify-between items-center text-sm py-1">
+                                <span
+                                    class="
+                                                    {% if subtopic.is_completed %} line-through text-gray-500 {% else %} text-gray-700 {% endif %}">
+                                    {{ subtopic.name }}
+                                </span>
+
+                                <form method="POST" action="{{ url_for('toggle_subtopic', subtopic_id=subtopic.id) }}">
+                                    <button type="submit"
+                                        title="Mark as {{ 'Pending' if subtopic.is_completed else 'Completed' }}"
+                                        class="text-xs font-semibold px-2 py-0.5 rounded transition duration-150 ease-in-out 
+                                                               {% if subtopic.is_completed %} bg-gray-300 text-gray-800 hover:bg-gray-400 {% else %} bg-indigo-500 text-white hover:bg-indigo-600 {% endif %}">
+                                        {{ "Done" if subtopic.is_completed else "Mark Complete" }}
+                                    </button>
+                                </form>
+                            </li>
+                            {% endfor %}
+                        </ul>
+
+                        <!-- Add New Subtopic Form -->
+                        <div class="mt-3 pt-2 border-t border-dashed border-gray-300">
+                            <form method="POST" action="{{ url_for('subjects', subject_id=selected_subject.id) }}"
+                                class="flex space-x-2">
+                                <input type="hidden" name="action" value="add_subtopic">
+                                <input type="hidden" name="topic_id" value="{{ topic.id }}">
+                                <input name="subtopic_name" placeholder="Add Subtopic..." required
+                                    class="form_style_subjects flex-grow" type="text">
+                                <button type="submit"
+                                    class="btn_subject_add text-white text-sm px-3 py-1 rounded-lg font-semibold">Add</button>
+                            </form>
+                        </div>
+
+                    </div>
+                    {% endfor %}
                 </div>
+                {% else %}
+                <p class="text-gray-500 mt-4">No topics found for this subject. Add a new topic above!</p>
+                {% endif %}
+            </div>
             {% else %}
-                <!-- Default State when no subject is selected -->
-                <div class="bg-white p-10 rounded-xl shadow-lg border border-gray-200 flex flex-col items-center justify-center h-full text-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#264143" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></svg>
-                    <h2 class="text-xl font-semibold text-gray-800 mt-4">Select or Create a Subject</h2>
-                    <p class="text-gray-500 mt-2">To start planning your study path, select a subject from the left sidebar or use the "Add New Subject" form.</p>
-                </div>
+
+            <div
+                class="bg-white p-10 rounded-xl shadow-lg border border-gray-200 flex flex-col items-center justify-center h-full text-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
+                    stroke="#264143" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+                    <polyline points="14 2 14 8 20 8" />
+                    <line x1="16" x2="8" y1="13" y2="13" />
+                    <line x1="16" x2="8" y1="17" y2="17" />
+                    <line x1="10" x2="8" y1="9" y2="9" />
+                </svg>
+                <h2 class="text-xl font-semibold text-gray-800 mt-4">Select or Create a Subject</h2>
+                <p class="text-gray-500 mt-2">To start planning your study path, select a subject from the left sidebar
+                    or use the "Add New Subject" form.</p>
+            </div>
             {% endif %}
         </div>
 
     </div>
-    
-    <!-- Custom Confirmation Modal (Added to fix the confirm() failure) -->
-    <div id="deleteModal" class="fixed inset-0 bg-gray-900 bg-opacity-75 hidden flex items-center justify-center z-50 transition-opacity duration-300">
-        <div class="bg-white p-8 rounded-xl shadow-2xl max-w-sm w-full transform scale-95 transition-transform duration-300">
+
+
+    <div id="deleteModal"
+        class="fixed inset-0 bg-gray-900 bg-opacity-75 hidden flex items-center justify-center z-50 transition-opacity duration-300">
+        <div
+            class="bg-white p-8 rounded-xl shadow-2xl max-w-sm w-full transform scale-95 transition-transform duration-300">
             <h3 class="text-xl font-bold text-red-600 mb-4 border-b pb-2">Confirm Deletion</h3>
-            <p class="text-gray-700 mb-6">Are you sure you want to delete the subject: <strong id="subjectNamePlaceholder"></strong>? This action cannot be undone.</p>
-            
-            <form id="confirmDeleteForm" method="POST" action="{{ url_for('subjects') }}" class="flex justify-end space-x-3">
+            <p class="text-gray-700 mb-6">Are you sure you want to delete the subject: <strong
+                    id="subjectNamePlaceholder"></strong>? This action cannot be undone.</p>
+
+            <form id="confirmDeleteForm" method="POST" action="{{ url_for('subjects') }}"
+                class="flex justify-end space-x-3">
                 <input type="hidden" name="action" value="delete_subject">
                 <input type="hidden" name="subject_id" id="subjectIdInput">
-                <button type="button" onclick="closeDeleteModal()" class="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition">
+                <button type="button" onclick="closeDeleteModal()"
+                    class="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition">
                     Cancel
                 </button>
-                <button type="submit" class="px-4 py-2 bg-red-600 text-white font-semibold rounded-lg shadow-md hover:bg-red-700 transition">
+                <button type="submit"
+                    class="px-4 py-2 bg-red-600 text-white font-semibold rounded-lg shadow-md hover:bg-red-700 transition">
                     Confirm Delete
                 </button>
             </form>
         </div>
     </div>
-    
+
     <script>
-        // JS functions for the custom modal
+
         function showDeleteModal(subjectId, subjectName) {
             document.getElementById('subjectNamePlaceholder').textContent = subjectName;
             document.getElementById('subjectIdInput').value = subjectId;
@@ -308,12 +355,28 @@
             document.getElementById('deleteModal').classList.add('hidden');
         }
 
-        // Close modal if user clicks outside of it
-        document.getElementById('deleteModal').addEventListener('click', function(e) {
+        document.getElementById('deleteModal').addEventListener('click', function (e) {
             if (e.target.id === 'deleteModal') {
                 closeDeleteModal();
             }
         });
     </script>
+
+
+    <footer class="bg-black border-t mt-8">
+        <div
+            class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col md:flex-row justify-between items-center text-white text-sm">
+
+            <p class="mb-3 md:mb-0">&copy; 2025 SmartStudy. All rights reserved.</p>
+
+            <div class="flex space-x-4">
+                <a href="#" class="hover:text-indigo-600">Privacy Policy</a>
+                <a href="#" class="hover:text-indigo-600">Terms of Service</a>
+                <a href="#" class="hover:text-indigo-600">Contact</a>
+            </div>
+
+        </div>
+    </footer>
 </body>
+
 </html>
